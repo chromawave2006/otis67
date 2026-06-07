@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lua Obfuscator</title>
+    <title>Roblox Luau Obfuscator</title>
     <style>
         :root {
-            --bg-color: #0f111a;
-            --panel-bg: #1e2235;
-            --accent-color: #ff5370;
-            --text-color: #a6accd;
+            --bg-color: #0b0c10;
+            --panel-bg: #1f2833;
+            --accent-color: #45f3ff;
+            --text-color: #c5c6c7;
             --text-bright: #ffffff;
         }
 
@@ -32,6 +32,7 @@
         h1 {
             color: var(--accent-color);
             margin: 0 0 10px 0;
+            text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
         }
 
         .container {
@@ -60,9 +61,9 @@
 
         textarea {
             flex: 1;
-            background: #121420;
-            border: 1px solid #2e3440;
-            color: #82aaff;
+            background: #0b0c10;
+            border: 1px solid #45f3ff33;
+            color: #66fcf1;
             font-family: 'Courier New', Courier, monospace;
             padding: 10px;
             border-radius: 4px;
@@ -83,90 +84,48 @@
 
         button {
             background-color: var(--accent-color);
-            color: var(--text-bright);
+            color: #0b0c10;
             border: none;
             padding: 12px 30px;
             font-size: 16px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
         }
 
         button:hover {
             opacity: 0.9;
-        }
-
-        button:active {
-            transform: scale(0.98);
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.5);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Lua Obfuscator</h1>
-        <p>Protect your scripts from simple reverse-engineering</p>
+        <h1>Roblox Luau Obfuscator</h1>
+        <p>No loadstring() required. Works in LocalScripts and Script.</p>
     </header>
 
     <div class="container">
         <div class="panel">
-            <label for="inputCode">Source Lua Code</label>
-            <textarea id="inputCode" placeholder="print('Hello World!')"></textarea>
+            <label for="inputCode">Source Roblox Lua Code</label>
+            <textarea id="inputCode" placeholder="print('Hello from Roblox!')"></textarea>
         </div>
         
         <div class="panel">
-            <label for="outputCode">Obfuscated Code</label>
-            <textarea id="outputCode" readonly placeholder="Obfuscated code will appear here..."></textarea>
+            <label for="outputCode">Obfuscated Code (Roblox Safe)</label>
+            <textarea id="outputCode" readonly placeholder="Your Roblox-compatible code will appear here..."></textarea>
         </div>
     </div>
 
     <div class="controls">
-        <button onclick="obfuscateCode()">Obfuscate Script</button>
+        <button onclick="obfuscateRobloxCode()">Obfuscate for Roblox</button>
     </div>
 
     <script>
-        function obfuscateCode() {
+        function obfuscateRobloxCode() {
             const input = document.getElementById('inputCode').value;
             if (!input.trim()) {
                 alert('Please enter some code first!');
-                return;
-            }
-
-            try {
-                // Step 1: Convert regular strings into bytecode dictionary escape sequences
-                let obfuscated = input.replace(/(["'])(.*?)\1/g, (match, quote, content) => {
-                    let byteString = "";
-                    for (let i = 0; i < content.length; i++) {
-                        byteString += "\\" + content.charCodeAt(i);
-                    }
-                    return `"${byteString}"`;
-                });
-
-                // Step 2: Basic Variable/Function name masking (naive replacement for demo)
-                // In a production obfuscator, an Abstract Syntax Tree (AST) parser is used.
-                const basicPack = [
-                    "local _0x" + Math.random().toString(16).slice(2, 8) + " = loadstring",
-                    "local _0x" + Math.random().toString(16).slice(2, 8) + " = string.char"
-                ];
-
-                // Step 3: Wrap the code in an anonymous executed function or garbage commentary wrapper
-                let garbageHeader = `-- Obfuscated with Private Lua Compiler\n-- [ ${Math.random().toString(36).substring(2)} ]\n\n`;
-                
-                // Base64 encoding simulation or numeric translation for the entire block
-                let numericPayload = [];
-                for(let i=0; i<obfuscated.length; i++) {
-                    numericPayload.push(obfuscated.charCodeAt(i));
-                }
-
-                let finalOutput = `${garbageHeader}local payload = {${numericPayload.join(',')}}\nlocal script = ""\nfor i=1, #payload do script = script .. string.char(payload[i]) end\nassert(loadstring(script))()`;
-
-                document.getElementById('outputCode').value = finalOutput;
-            } catch (err) {
-                document.getElementById('outputCode').value = "-- Error during obfuscation: " + err.message;
-            }
-        }
-    </script>
-
-</body>
-</html>
+                return
