@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lua Obfuscator</title>
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --panel-bg: #1e2235;
+            --accent-color: #ff5370;
+            --text-color: #a6accd;
+            --text-bright: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin: 0 0 10px 0;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            height: 60vh;
+        }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--panel-bg);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--text-bright);
+        }
+
+        textarea {
+            flex: 1;
+            background: #121420;
+            border: 1px solid #2e3440;
+            color: #82aaff;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 10px;
+            border-radius: 4px;
+            resize: none;
+            font-size: 14px;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: var(--text-bright);
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Lua Obfuscator</h1>
+        <p>Protect your scripts from simple reverse-engineering</p>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <label for="inputCode">Source Lua Code</label>
+            <textarea id="inputCode" placeholder="print('Hello World!')"></textarea>
+        </div>
+        
+        <div class="panel">
+            <label for="outputCode">Obfuscated Code</label>
+            <textarea id="outputCode" readonly placeholder="Obfuscated code will appear here..."></textarea>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="obfuscateCode()">Obfuscate Script</button>
+    </div>
+
+    <script>
+        function obfuscateCode() {
+            const input = document.getElementById('inputCode').value;
+            if (!input.trim()) {
+                alert('Please enter some code first!');
+                return;
+            }
+
+            try {
+                // Step 1: Convert regular strings into bytecode dictionary escape sequences
+                let obfuscated = input.replace(/(["'])(.*?)\1/g, (match, quote, content) => {
+                    let byteString = "";
+                    for (let i = 0; i < content.length; i++) {
+                        byteString += "\\" + content.charCodeAt(i);
+                    }
+                    return `"${byteString}"`;
+                });
+
+                // Step 2: Basic Variable/Function name masking (naive replacement for demo)
+                // In a production obfuscator, an Abstract Syntax Tree (AST) parser is used.
+                const basicPack = [
+                    "local _0x" + Math.random().toString(16).slice(2, 8) + " = loadstring",
+                    "local _0x" + Math.random().toString(16).slice(2, 8) + " = string.char"
+                ];
+
+                // Step 3: Wrap the code in an anonymous executed function or garbage commentary wrapper
+                let garbageHeader = `-- Obfuscated with Private Lua Compiler\n-- [ ${Math.random().toString(36).substring(2)} ]\n\n`;
+                
+                // Base64 encoding simulation or numeric translation for the entire block
+                let numericPayload = [];
+                for(let i=0; i<obfuscated.length; i++) {
+                    numericPayload.push(obfuscated.charCodeAt(i));
+                }
+
+                let finalOutput = `${garbageHeader}local payload = {${numericPayload.join(',')}}\nlocal script = ""\nfor i=1, #payload do script = script .. string.char(payload[i]) end\nassert(loadstring(script))()`;
+
+                document.getElementById('outputCode').value = finalOutput;
+            } catch (err) {
+                document.getElementById('outputCode').value = "-- Error during obfuscation: " + err.message;
+            }
+        }
+    </script>
+
+</body>
+</html>
